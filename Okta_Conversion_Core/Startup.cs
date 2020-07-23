@@ -1,7 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -25,6 +22,8 @@ namespace Okta_Conversion_Core
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            services.Configure<Settings.SmtpSettings>(Configuration.GetSection("Smtp"));
 
             var oktaMvcOptions = new OktaMvcOptions()
             {

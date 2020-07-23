@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
 using Microsoft.AspNetCore.Authorization;
@@ -13,11 +11,20 @@ using System.Net;
 using System.IO;
 using Newtonsoft.Json;
 
+using Microsoft.Extensions.Options;
+
 namespace Okta_Conversion_Core.Controllers
 {
     [Authorize]
     public class DashboardController : Controller
     {
+        IOptions<Settings.SmtpSettings> _smtpSettings;
+
+        public DashboardController(IOptions<Settings.SmtpSettings> smtpSettings)
+        {
+            _smtpSettings = smtpSettings;
+        }
+
         // GET: Dashboard
         public ActionResult Index()
         {
@@ -44,8 +51,8 @@ namespace Okta_Conversion_Core.Controllers
             bodyBuilder.HtmlBody = "<p>this is my test email</p>";
             bodyBuilder.TextBody = "this is my test email";
 
-            smtpClient.Connect("address", 123, true);
-            smtpClient.Authenticate("username", "password");
+            smtpClient.Connect(_smtpSettings.Value.Host, _smtpSettings.Value.Port, true);
+            smtpClient.Authenticate(_smtpSettings.Value.Username, _smtpSettings.Value.Password);
 
             smtpClient.Send(message);
             smtpClient.Disconnect(true);
